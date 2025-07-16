@@ -41,3 +41,14 @@ export class CreateUserDto {
   })
   images?: Express.Multer.File[];
 }
+
+export class LoginDto {
+  @ApiProperty({ example: 'john@gmail.com' })
+  @IsEmail()
+  email: string;
+
+  @ApiProperty({ example: '123456' })
+  @IsString()
+  @MinLength(6)
+  password: string;
+}

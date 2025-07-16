@@ -1,13 +1,16 @@
 import { HttpService } from '@nestjs/axios';
-import { Injectable } from '@nestjs/common';
+import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { CreateUserDto } from './dto/create-auth.dto';
 import * as bcrypt from 'bcrypt';
+import { JwtService } from '@nestjs/jwt';
 import { PrismaService } from '../prisma-service/prisma-service.service';
+import { ApiResponse } from 'src/util/common/apiresponse/apiresponse';
 @Injectable()
 export class AuthService {
   constructor(
-    private http: HttpService,
+    // private http: HttpService,
     private readonly prisma: PrismaService,
+    private readonly jwtService: JwtService,
   ) {}
 
   async create(dto: CreateUserDto, image: string) {
@@ -21,6 +24,23 @@ export class AuthService {
     });
 
     return user;
+  }
+
+  async login(email: string, password: string) {
+    const user = await this.prisma.user.findUnique({ where: { email } });
+    if (!user) {
+      return ApiResponse.error('You Are Not Registered');
+    }
+    const passwordValid = await bcrypt.compare(password, user.password);
+    if (!passwordValid) {
+      return ApiResponse.error('Your Password is wrong!!');
+    }
+    const payload = { sub: user.id, email: user.email, role: user.role };
+    const token = await this.jwtService.signAsync(payload);
+    return ApiResponse.success({
+      accessToken: token,
+      message: 'User Logged in successfully',
+    });
   }
   // getTwitterAuthUrl(): string {
   //   const clientId = process.env.TWITTER_CLIENT_ID;
