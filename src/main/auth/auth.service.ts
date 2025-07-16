@@ -37,10 +37,7 @@ export class AuthService {
     }
     const payload = { sub: user.id, email: user.email, role: user.role };
     const token = await this.jwtService.signAsync(payload);
-    return ApiResponse.success({
-      accessToken: token,
-      message: 'User Logged in successfully',
-    });
+    return ApiResponse.success(token, 'User Logged in successfully');
   }
   // getTwitterAuthUrl(): string {
   //   const clientId = process.env.TWITTER_CLIENT_ID;
