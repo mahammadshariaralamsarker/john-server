@@ -8,12 +8,14 @@ services:
       POSTGRES_PASSWORD: admin
       POSTGRES_DB: johndb
     ports:
-      - '5434:5432'
+      - '5435:5432'
     volumes:
-      - '/Users/shariar2/Documents/john-server/db_data'
+      - '/Users/saifu/Project/john-server/db_data'
 
   adminer:
     image: adminer
     restart: always
     ports:
       - 8080:8080
+      
+# "C:\Users\saifu\Project\john-server"
