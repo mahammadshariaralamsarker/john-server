@@ -6,3 +6,76 @@ datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
 }
+
+enum Role {
+  User
+  Admin
+}
+
+model User {
+  id                    String   @id @default(uuid())
+  name                  String
+  email                 String   @unique
+  password              String
+  role                  Role     @default(User)
+  image                 String
+  isDeleted             Boolean  @default(false)
+  twoFactorAuthenticate Boolean? @default(false)
+  createdAt             DateTime @default(now())
+  updatedAt             DateTime @updatedAt
+
+  contents Content[]
+}
+
+model Content {
+  id             String   @id @default(uuid())
+  userId         String
+  socialPlatform String
+  postType       String
+  status         String
+  caption        String
+  images         String
+  video          String
+  comments       String
+  publishAt      String
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  user  User   @relation(fields: [userId], references: [id])
+  post  Post?
+  reel  Reel?
+  story Story?
+}
+
+model Post {
+  id        String   @id @default(uuid())
+  contentId String   @unique
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  content Content @relation(fields: [contentId], references: [id])
+}
+
+model Reel {
+  id          String   @id @default(uuid())
+  contentId   String   @unique
+  topic       String
+  description String
+  music       String
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  content Content @relation(fields: [contentId], references: [id])
+}
+
+model Story {
+  id          String   @id @default(uuid())
+  contentId   String   @unique
+  topic       String
+  description String
+  music       String
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  content Content @relation(fields: [contentId], references: [id])
+}
