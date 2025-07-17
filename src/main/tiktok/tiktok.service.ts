@@ -27,7 +27,6 @@ export class TiktokService {
           'Content-Type': 'application/x-www-form-urlencoded',
         },
       });
-      console.log(res.data);
       return res.data;
     } catch (err) {
       console.error(err.response?.data || err);
@@ -38,20 +37,20 @@ export class TiktokService {
     }
   }
 
-  async getUserInfo(accessToken: string) {
-    try {
-      const res = await axios.get('https://open.tiktokapis.com/v2/user/info/', {
-        headers: {
-          Authorization: `Bearer ${accessToken}`,
-        },
-      });
-      return res.data;
-    } catch (err) {
-      console.error(err.response?.data || err);
-      throw new HttpException(
-        err.response?.data || 'Failed to fetch user info',
-        HttpStatus.BAD_REQUEST,
-      );
-    }
-  }
+  // async getUserInfo(accessToken: string) {
+  //   try {
+  //     const res = await axios.get('https://open.tiktokapis.com/v2/user/info/', {
+  //       headers: {
+  //         Authorization: `Bearer ${accessToken}`,
+  //       },
+  //     });
+  //     return res.data;
+  //   } catch (err) {
+  //     console.error(err.response?.data || err);
+  //     throw new HttpException(
+  //       err.response?.data || 'Failed to fetch user info',
+  //       HttpStatus.BAD_REQUEST,
+  //     );
+  //   }
+  // }
 }
