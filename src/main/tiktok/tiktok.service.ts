@@ -9,7 +9,7 @@ export class TiktokService {
   private readonly redirectUri =
     'https://john-server.onrender.com/auth/tiktok/callback';
 
-  async getAccessToken(code: string, codeVerifier: string) {
+  async getAccessToken(code: string) {
     const url = 'https://open.tiktokapis.com/v2/oauth/token';
 
     const body = qs.stringify({
@@ -18,7 +18,7 @@ export class TiktokService {
       code,
       grant_type: 'authorization_code',
       redirect_uri: this.redirectUri,
-      code_verifier: codeVerifier,
+      // code_verifier: codeVerifier,
     });
 
     try {
