@@ -8,7 +8,7 @@ export class TiktokService {
   private readonly clientKey = 'sbawtbqug63mru0371';
   private readonly clientSecret = 'hsyZepE0fRpcTD4yG6FV4mi7FfqQGsnk';
   private readonly redirectUri =
-    'https://your-ngrok-url.ngrok.io/auth/tiktok/callback'; // ⚠️ NOT localhost
+    'https://john-server.onrender.com/auth/tiktok/callback';
 
   async getAccessToken(code: string) {
     const url = 'https://open.tiktokapis.com/v2/oauth/token';
