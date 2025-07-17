@@ -1,4 +1,3 @@
-// auth.service.ts
 import { Injectable, HttpException, HttpStatus } from '@nestjs/common';
 import axios from 'axios';
 import * as qs from 'querystring';
@@ -10,26 +9,27 @@ export class TiktokService {
   private readonly redirectUri =
     'https://john-server.onrender.com/auth/tiktok/callback';
 
-  async getAccessToken(code: string) {
+  async getAccessToken(code: string, codeVerifier: string) {
     const url = 'https://open.tiktokapis.com/v2/oauth/token';
 
-    try {
-      const body = qs.stringify({
-        client_key: this.clientKey,
-        client_secret: this.clientSecret,
-        code,
-        grant_type: 'authorization_code',
-        redirect_uri: this.redirectUri,
-      });
+    const body = qs.stringify({
+      client_key: this.clientKey,
+      client_secret: this.clientSecret,
+      code,
+      grant_type: 'authorization_code',
+      redirect_uri: this.redirectUri,
+      code_verifier: codeVerifier,
+    });
 
+    try {
       const res = await axios.post(url, body, {
         headers: {
           'Content-Type': 'application/x-www-form-urlencoded',
         },
       });
+
       return res.data;
     } catch (err) {
-      console.error(err.response?.data || err);
       throw new HttpException(
         err.response?.data || 'Failed to get access token',
         HttpStatus.BAD_REQUEST,
@@ -37,20 +37,19 @@ export class TiktokService {
     }
   }
 
-  // async getUserInfo(accessToken: string) {
-  //   try {
-  //     const res = await axios.get('https://open.tiktokapis.com/v2/user/info/', {
-  //       headers: {
-  //         Authorization: `Bearer ${accessToken}`,
-  //       },
-  //     });
-  //     return res.data;
-  //   } catch (err) {
-  //     console.error(err.response?.data || err);
-  //     throw new HttpException(
-  //       err.response?.data || 'Failed to fetch user info',
-  //       HttpStatus.BAD_REQUEST,
-  //     );
-  //   }
-  // }
+  async getUserInfo(accessToken: string) {
+    try {
+      const res = await axios.get('https://open.tiktokapis.com/v2/user/info/', {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+      });
+      return res.data;
+    } catch (err) {
+      throw new HttpException(
+        err.response?.data || 'Failed to fetch user info',
+        HttpStatus.BAD_REQUEST,
+      );
+    }
+  }
 }
