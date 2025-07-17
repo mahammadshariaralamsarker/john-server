@@ -13,7 +13,13 @@ export class TikTokController {
     const userData = await this.tiktokService.getUserInfo(
       tokenData.access_token,
     );
-    console.log(tokenData, userData);
-    res.json({ tokenData, userData });
+    res.cookie('tiktok_access_token', tokenData, {
+      httpOnly: true,
+      secure: true, // make false if using localhost in dev
+      maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
+      sameSite: 'lax',
+    });
+
+    return res.redirect('http://localhost:3001');
   }
 }
