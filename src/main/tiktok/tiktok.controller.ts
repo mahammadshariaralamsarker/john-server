@@ -11,7 +11,7 @@ import { Request, Response } from 'express';
 import { TiktokService } from './tiktok.service';
 
 @Controller('auth/tiktok')
-export class AuthController {
+export class TikTokController {
   constructor(private readonly tiktokService: TiktokService) {}
 
   @Get('callback')
