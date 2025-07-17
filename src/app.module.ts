@@ -4,8 +4,8 @@ import { AppService } from './app.service';
 import { AuthModule } from './main/auth/auth.module';
 import { TwitModule } from './main/twit/twit.module';
 import { HttpModule } from '@nestjs/axios';
-import { PrismaModule } from './main/prisma-service/prisma-service.module';
 import { ConfigModule } from '@nestjs/config';
+import { TiktokModule } from './tiktok/tiktok.module';
 
 @Module({
   imports: [
@@ -15,7 +15,7 @@ import { ConfigModule } from '@nestjs/config';
     AuthModule,
     TwitModule,
     HttpModule,
-    PrismaModule,
+    TiktokModule,
   ],
   controllers: [AppController],
   providers: [AppService],
