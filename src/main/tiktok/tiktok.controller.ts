@@ -22,17 +22,17 @@ export class TikTokController {
     @Res() res: Response,
   ) {
     try {
-      res.redirect(`http://localhost:3001`);
       const tokenResponse = await this.tiktokService.getAccessToken(code);
+      // console.log(tokenResponse);
+      // res.cookie('tiktok_access_token', tokenResponse.access_token, {
+      //   httpOnly: true,
+      //   secure: true,
+      // });
 
-      res.cookie('tiktok_access_token', tokenResponse.access_token, {
-        httpOnly: true,
-        secure: true,
-      });
-
-      await this.tiktokService.getUserInfo(tokenResponse.access_token);
+      // await this.tiktokService.getUserInfo(tokenResponse.access_token);
 
       // Optionally: redirect to frontend with user info
+      res.redirect(`http://localhost:3001`);
     } catch (err) {
       console.error(err);
       throw new HttpException('Callback failed', err);
