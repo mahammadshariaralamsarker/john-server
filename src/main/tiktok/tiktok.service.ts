@@ -7,35 +7,27 @@ export class TiktokService {
   private readonly clientKey = 'sbawtbqug63mru0371';
   private readonly clientSecret = 'hsyZepE0fRpcTD4yG6FV4mi7FfqQGsnk';
   private readonly redirectUri =
-    'https://c4b64c54c504.ngrok-free.app/auth/tiktok/callback';
+    'https://c8d2bd9b655e.ngrok-free.app/auth/tiktok/callback';
 
   async getAccessToken(code: string) {
-    const url = 'https://open.tiktokapis.com/v2/oauth/token';
-    // console.log(code, 'code');
+    const url = 'https://open.tiktokapis.com/v2/oauth/token/';
     const body = qs.stringify({
       client_key: this.clientKey,
       client_secret: this.clientSecret,
       code,
       grant_type: 'authorization_code',
       redirect_uri: this.redirectUri,
-      // code_verifier: codeVerifier,
     });
-
     try {
       const res = await axios.post(url, body, {
         headers: {
           'Content-Type': 'application/x-www-form-urlencoded',
         },
       });
-
-      console.log(res);
-
+      console.log(res.data);
       return res.data;
     } catch (err) {
-      throw new HttpException(
-        err.response?.data || 'Failed to get access token',
-        HttpStatus.BAD_REQUEST,
-      );
+      console.log(err);
     }
   }
 
