@@ -24,10 +24,10 @@ export class TikTokController {
   async handleCallback(@Query('code') code: string, @Res() res: Response) {
     try {
       const tokenResponse = await this.tiktokService.getAccessToken(code);
-      console.log(tokenResponse);
+      console.log({ tokenResponse });
       const redirectUrl = `http://localhost:3001/?accessToken=${tokenResponse.access_token}&refreshToken=${tokenResponse.refresh_token}`;
       const accessToken = tokenResponse.access_token;
-      const userInfo = await this.tiktokService.getUserInfo(accessToken);
+      // const userInfo = await this.tiktokService.getUserInfo(accessToken);
       return res.redirect(redirectUrl);
     } catch (err) {
       console.error(err);
@@ -54,5 +54,11 @@ export class TikTokController {
     }
 
     return this.tiktokService.videoInit(video.filename, body.accessToken);
+  }
+
+  @Get('videos')
+  @ApiOperation({ summary: 'Get uploaded videos from TikTok' })
+  async getVideos() {
+    return this.tiktokService.getUploadedVideos('adfg');
   }
 }

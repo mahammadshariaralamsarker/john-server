@@ -9,7 +9,7 @@ export class TiktokService {
   private readonly clientKey = 'sbawtbqug63mru0371';
   private readonly clientSecret = 'hsyZepE0fRpcTD4yG6FV4mi7FfqQGsnk';
   private readonly redirectUri =
-    'https://7e3ad3e41453.ngrok-free.app/auth/tiktok/callback';
+    'https://cobra-humorous-sharply.ngrok-free.app/auth/tiktok/callback';
   async getAccessToken(code: string) {
     const url = 'https://open.tiktokapis.com/v2/oauth/token/';
     const body = qs.stringify({
@@ -25,9 +25,7 @@ export class TiktokService {
           'Content-Type': 'application/x-www-form-urlencoded',
         },
       });
-      if (res.data.publish_id) {
-        return res.data;
-      }
+      return res.data;
     } catch (err) {
       console.log(err);
     }
@@ -104,6 +102,27 @@ export class TiktokService {
       return ApiResponse.success('Video uploaded successfully');
     } catch (error) {
       console.error('TikTok Upload Error:', error?.response?.data || error);
+    }
+  }
+  async getUploadedVideos(accessToken: string) {
+    try {
+      const response = await axios.post(
+        'https://open.tiktokapis.com/v2/video/list/',
+        {
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+            'Content-Type': 'application/json',
+          },
+        },
+      );
+
+      return response.data;
+    } catch (error) {
+      console.error(
+        'Error fetching TikTok videos:',
+        error.response?.data || error.message,
+      );
+      throw new Error('Failed to fetch TikTok videos');
     }
   }
 }
