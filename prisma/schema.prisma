@@ -24,7 +24,18 @@ model User {
   createdAt             DateTime @default(now())
   updatedAt             DateTime @updatedAt
 
+  otp   Otp[]
   contents Content[]
+}
+
+model Otp {
+  id        Int      @id @default(autoincrement())
+  userId    String
+  otp       String
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id])
 }
 
 model Content {

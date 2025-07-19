@@ -13,6 +13,9 @@ import { ApiBody, ApiConsumes } from '@nestjs/swagger';
 import { CreateUserDto, LoginDto } from './dto/create-auth.dto';
 import { FilesInterceptor } from '@nestjs/platform-express';
 import { uploadToCloudinary } from 'src/util/common/cloudinary/cloudinary';
+import { RequestOtpDto } from './dto/requestOtp.dto';
+import { ResetPasswordDto } from './dto/reset-password.dto';
+import { VerifyOtpDto } from './dto/verify-otp.dto';
 
 @Controller('auth')
 export class AuthController {
@@ -33,6 +36,24 @@ export class AuthController {
   @ApiBody({ type: LoginDto })
   login(@Body() dto: LoginDto) {
     return this.authService.login(dto.email, dto.password);
+  }
+
+  @Post('forget-password')
+  @ApiBody({ type: RequestOtpDto })
+  requestOtp(@Body() dto: RequestOtpDto) {
+    return this.authService.requestOtp(dto.email);
+  }
+
+  @Post('verify-otp')
+  @ApiBody({ type: VerifyOtpDto })
+  verifyOtp(@Body() dto: VerifyOtpDto) {
+    return this.authService.verifyOtp(dto);
+  }
+
+  @Post('resetPassword')
+  @ApiBody({ type: ResetPasswordDto })
+  resetPassword(@Body() dto: ResetPasswordDto) {
+    return this.authService.resetPassword(dto);
   }
   // @Get('login')
   // redirectToTwitter(@Res() res: Response) {
