@@ -3,6 +3,7 @@ import axios from 'axios';
 import * as path from 'path';
 import * as fs from 'fs';
 import * as qs from 'querystring';
+import { ApiResponse } from 'src/util/common/apiresponse/apiresponse';
 @Injectable()
 export class TiktokService {
   private readonly clientKey = 'sbawtbqug63mru0371';
@@ -24,7 +25,9 @@ export class TiktokService {
           'Content-Type': 'application/x-www-form-urlencoded',
         },
       });
-      return res.data;
+      if (res.data.publish_id) {
+        return res.data;
+      }
     } catch (err) {
       console.log(err);
     }
@@ -52,24 +55,13 @@ export class TiktokService {
     }
   }
 
-  async videoInit() {
+  async videoInit(filename: string, accessToken: string) {
     try {
-      const accessToken =
-        'act.IB5KjgoxsyQShqmVmoHHyp0nmgJD9tmYX2UuDLpEqKY8cAP0FAl3KJUJEiHY!4507.va';
-
-      const videoPath = path.join(
-        process.cwd(),
-        'public',
-        'uploads',
-        'video.mp4',
-      );
-
-      console.log({ videoPath });
+      const videoPath = path.join(process.cwd(), 'public', 'uploads', filename);
       const videoStat = fs.statSync(videoPath);
       const videoSize = videoStat.size;
+      const videoBuffer = fs.readFileSync(videoPath);
 
-      const chunkSize = videoSize;
-      const totalChunkCount = Math.ceil(videoSize / chunkSize);
       const payload = {
         post_info: {
           title: 'this will be a funny #cat video on your @tiktok #fyp',
@@ -81,11 +73,11 @@ export class TiktokService {
           source: 'FILE_UPLOAD',
           video_size: videoSize,
           chunk_size: videoSize,
-          total_chunk_count: totalChunkCount,
+          total_chunk_count: 1,
         },
       };
 
-      const response = await axios.post(
+      const initResponse = await axios.post(
         'https://open.tiktokapis.com/v2/post/publish/video/init/',
         payload,
         {
@@ -96,13 +88,22 @@ export class TiktokService {
         },
       );
 
-      return response.data;
-    } catch (error) {
-      if (axios.isAxiosError(error) && error.response) {
-        console.error('TikTok API error:', error.response.data);
-      } else {
-        console.error('Unknown error:', error);
+      const data = initResponse.data?.data;
+
+      if (!data?.upload_url || !data?.publish_id) {
+        ApiResponse.error('Failed to initialize video upload');
       }
+
+      const headers = {
+        'Content-Range': `bytes 0-${videoSize - 1}/${videoSize}`,
+        'Content-Length': videoSize.toString(),
+        'Content-Type': 'video/mp4',
+      };
+      const result = await axios.put(data.upload_url, videoBuffer, { headers });
+      console.log(result);
+      return ApiResponse.success('Video uploaded successfully');
+    } catch (error) {
+      console.error('TikTok Upload Error:', error?.response?.data || error);
     }
   }
 }

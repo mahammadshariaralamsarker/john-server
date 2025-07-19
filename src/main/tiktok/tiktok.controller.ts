@@ -1,7 +1,21 @@
-import { Controller, Get, Query, Res } from '@nestjs/common';
+import {
+  BadRequestException,
+  Body,
+  Controller,
+  Get,
+  Post,
+  Query,
+  Res,
+  UploadedFile,
+  UseInterceptors,
+} from '@nestjs/common';
 import { Response } from 'express';
 import { TiktokService } from './tiktok.service';
-import { ApiOperation } from '@nestjs/swagger';
+import { ApiBody, ApiConsumes, ApiOperation } from '@nestjs/swagger';
+import { FileInterceptor } from '@nestjs/platform-express';
+import { diskStorage } from 'multer';
+import path from 'path';
+import { UploadTiktokVideoDto } from './dto/create-tiktok.dto';
 
 @Controller('auth/tiktok')
 export class TikTokController {
@@ -20,34 +34,25 @@ export class TikTokController {
     }
   }
 
-  // @Post('publish')
-  // @UseInterceptors(FileInterceptor('video'))
-  // @ApiConsumes('multipart/form-data')
-  // @ApiOperation({ summary: 'Direct post to TikTok with video file' })
-  // @ApiBody({
-  //   schema: {
-  //     type: 'object',
-  //     properties: {
-  //       video: {
-  //         type: 'string',
-  //         format: 'binary',
-  //       },
-  //       description: {
-  //         type: 'string',
-  //         example: 'this is demo description',
-  //       },
-  //       accessToken: {
-  //         type: 'string',
-  //         example:
-  //           'act.IB5KjgoxsyQShqmVmoHHyp0nmgJD9tmYX2UuDLpEqKY8cAP0FAl3KJUJEiHY!4507.va',
-  //       },
-  //     },
-  //   },
-  // })
-  @Get('initVideo')
-  @ApiOperation({ summary: 'Initialize TikTok Video Upload' })
-  async initVideo() {
-    const videoInitResponse = await this.tiktokService.videoInit();
-    console.log(videoInitResponse);
+  @Post('publish')
+  @UseInterceptors(
+    FileInterceptor('video', {
+      storage: diskStorage({
+        destination: './public/uploads',
+      }),
+    }),
+  )
+  @ApiOperation({ summary: 'Upload video to TikTok' })
+  @ApiConsumes('multipart/form-data')
+  @ApiBody({ type: UploadTiktokVideoDto })
+  async publishVideo(
+    @UploadedFile() video: Express.Multer.File,
+    @Body() body: UploadTiktokVideoDto,
+  ) {
+    if (!video || !video.filename) {
+      throw new BadRequestException('No video file uploaded.');
+    }
+
+    return this.tiktokService.videoInit(video.filename, body.accessToken);
   }
 }
