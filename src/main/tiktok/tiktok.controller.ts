@@ -1,18 +1,7 @@
-import {
-  Controller,
-  Get,
-  Query,
-  Res,
-  Req,
-  Post,
-  UseInterceptors,
-  UploadedFile,
-  Body,
-} from '@nestjs/common';
+import { Controller, Get, Query, Res } from '@nestjs/common';
 import { Response } from 'express';
 import { TiktokService } from './tiktok.service';
-import { FileInterceptor } from '@nestjs/platform-express';
-import { ApiBody, ApiConsumes, ApiOperation } from '@nestjs/swagger';
+import { ApiOperation } from '@nestjs/swagger';
 
 @Controller('auth/tiktok')
 export class TikTokController {
@@ -21,11 +10,10 @@ export class TikTokController {
   async handleCallback(@Query('code') code: string, @Res() res: Response) {
     try {
       const tokenResponse = await this.tiktokService.getAccessToken(code);
+      console.log(tokenResponse);
       const redirectUrl = `http://localhost:3001/?accessToken=${tokenResponse.access_token}&refreshToken=${tokenResponse.refresh_token}`;
-
       const accessToken = tokenResponse.access_token;
       const userInfo = await this.tiktokService.getUserInfo(accessToken);
-      console.log(userInfo);
       return res.redirect(redirectUrl);
     } catch (err) {
       console.error(err);
