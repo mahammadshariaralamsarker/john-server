@@ -20,8 +20,14 @@ export class FacebookController {
       const { accessToken } =
         await this.facebookService.exchangeCodeForToken(code);
 
-      // Redirect user to frontend with token
-      res.redirect(`http://localhost:3001?token=${accessToken}`);
+      res
+        .cookie('facebookToken', accessToken, {
+          httpOnly: true,
+          secure: false,
+          sameSite: 'lax',
+          maxAge: 7 * 24 * 60 * 60 * 1000,
+        })
+        .redirect(`http://localhost:3001`);
     } catch (error) {
       console.error('Error in Facebook callback:', error);
       res.redirect(`http://localhost:3001?error=auth_failed`);
