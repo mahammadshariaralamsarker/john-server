@@ -1,16 +1,15 @@
 import { Injectable, HttpException, HttpStatus } from '@nestjs/common';
 import axios from 'axios';
+import * as path from 'path';
+import * as fs from 'fs';
 import * as qs from 'querystring';
-import * as FormData from 'form-data';
-import { Readable } from 'stream';
+import { ApiResponse } from 'src/util/common/apiresponse/apiresponse';
 @Injectable()
 export class TiktokService {
   private readonly clientKey = 'sbawtbqug63mru0371';
   private readonly clientSecret = 'hsyZepE0fRpcTD4yG6FV4mi7FfqQGsnk';
   private readonly redirectUri =
-    'https://c8d2bd9b655e.ngrok-free.app/auth/tiktok/callback';
-  private readonly accessToken =
-    'rft.xLvaKH5Vs9j7mvmhKrFt3mM1gJCsQEG6sO9DBCfKNB2IAYxl7ZR8P3lQ7eg5!4525.va';
+    'https://cobra-humorous-sharply.ngrok-free.app/auth/tiktok/callback';
   async getAccessToken(code: string) {
     const url = 'https://open.tiktokapis.com/v2/oauth/token/';
     const body = qs.stringify({
@@ -54,31 +53,70 @@ export class TiktokService {
     }
   }
 
-  async videoInit() {
-    const payload = {
-      post_info: {
-        title: 'This is a test video #tiktok',
-        privacy_level: 'PUBLIC',
-        disable_duet: false,
-        disable_comment: true,
-        disable_stitch: false,
-        video_cover_timestamp_ms: 1000,
-      },
-      source_info: {
-        source: 'FILE_UPLOAD',
-        video_size: 50000123,
-        chunk_size: 10000000,
-        total_chunk_count: 1,
-      },
-    };
-
+  async videoInit(filename: string, accessToken: string) {
     try {
-      const response = await axios.post(
+      const videoPath = path.join(process.cwd(), 'public', 'uploads', filename);
+      const videoStat = fs.statSync(videoPath);
+      const videoSize = videoStat.size;
+      const videoBuffer = fs.readFileSync(videoPath);
+
+      const payload = {
+        post_info: {
+          title: 'this will be a funny #cat video on your @tiktok #fyp',
+          privacy_level: 'SELF_ONLY',
+          brand_content_toggle: false,
+          brand_organic_toggle: false,
+        },
+        source_info: {
+          source: 'FILE_UPLOAD',
+          video_size: videoSize,
+          chunk_size: videoSize,
+          total_chunk_count: 1,
+        },
+      };
+
+      const initResponse = await axios.post(
         'https://open.tiktokapis.com/v2/post/publish/video/init/',
         payload,
         {
           headers: {
-            Authorization: `Bearer ${this.accessToken}`,
+            Authorization: `Bearer ${accessToken}`,
+            'Content-Type': 'application/json',
+          },
+        },
+      );
+
+      const data = initResponse.data?.data;
+
+      if (!data?.upload_url || !data?.publish_id) {
+        ApiResponse.error('Failed to initialize video upload');
+      }
+
+      const headers = {
+        'Content-Range': `bytes 0-${videoSize - 1}/${videoSize}`,
+        'Content-Length': videoSize.toString(),
+        'Content-Type': 'video/mp4',
+      };
+      const result = await axios.put(data.upload_url, videoBuffer, { headers });
+      console.log(result);
+      return ApiResponse.success('Video uploaded successfully');
+    } catch (error) {
+      console.error('TikTok Upload Error:', error?.response?.data || error);
+    }
+  }
+  async getUploadedVideos(accessToken: string) {
+    try {
+      const token =
+        'act.IB5KjgoxsyQShqmVmoHHyp0nmgJD9tmYX2UuDLpEqKY8cAP0FAl3KJUJEiHY!4507.va';
+
+      const response = await axios.post(
+        'https://open.tiktokapis.com/v2/video/list/',
+        {
+          fields: ['video_id', 'title', 'create_time'],
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
             'Content-Type': 'application/json',
           },
         },
@@ -86,7 +124,12 @@ export class TiktokService {
 
       return response.data;
     } catch (error) {
-      console.log(error);
+      console.error({ error });
+      if (axios.isAxiosError(error) && error.response) {
+        console.error('TikTok API error:', error.response.data);
+      } else {
+        console.error('Unknown error:', error);
+      }
     }
   }
 }
