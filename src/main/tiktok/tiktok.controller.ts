@@ -59,6 +59,8 @@ export class TikTokController {
   @Get('videos')
   @ApiOperation({ summary: 'Get uploaded videos from TikTok' })
   async getVideos() {
-    return this.tiktokService.getUploadedVideos('adfg');
+    return this.tiktokService.getUploadedVideos(
+      'act.IB5KjgoxsyQShqmVmoHHyp0nmgJD9tmYX2UuDLpEqKY8cAP0FAl3KJUJEiHY!4507.va',
+    );
   }
 }

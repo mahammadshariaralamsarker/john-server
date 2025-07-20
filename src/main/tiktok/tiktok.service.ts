@@ -106,11 +106,17 @@ export class TiktokService {
   }
   async getUploadedVideos(accessToken: string) {
     try {
+      const token =
+        'act.IB5KjgoxsyQShqmVmoHHyp0nmgJD9tmYX2UuDLpEqKY8cAP0FAl3KJUJEiHY!4507.va';
+
       const response = await axios.post(
         'https://open.tiktokapis.com/v2/video/list/',
         {
+          fields: ['video_id', 'title', 'create_time'],
+        },
+        {
           headers: {
-            Authorization: `Bearer ${accessToken}`,
+            Authorization: `Bearer ${token}`,
             'Content-Type': 'application/json',
           },
         },
@@ -118,11 +124,12 @@ export class TiktokService {
 
       return response.data;
     } catch (error) {
-      console.error(
-        'Error fetching TikTok videos:',
-        error.response?.data || error.message,
-      );
-      throw new Error('Failed to fetch TikTok videos');
+      console.error({ error });
+      if (axios.isAxiosError(error) && error.response) {
+        console.error('TikTok API error:', error.response.data);
+      } else {
+        console.error('Unknown error:', error);
+      }
     }
   }
 }
