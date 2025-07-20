@@ -29,6 +29,8 @@ export class FacebookService {
 
     return { accessToken };
   }
-}
 
-// https://4a7d20c4df90.ngrok-free.app/auth/facebook/callback?code=AQDrjkts-UCWQ5jRLq7Pt5FnZ5Qc4yNIM2TRBCUr4emSbN0XB15YwxAr5LwWWBxpln5CkzodSjqyIO5Cpk9DbrzpRqZUwQ9w2fRegbZF5bu9S8NL_L04sqXx5D5ktx84cOJBZxTAPoPoNI3VK893M2505DEMivIthO2kVOF_TAG7oh75GXbJIdUxoLu4n2hpOLPpXRWOKD-XqaYKXWlWez4yo7jcEY25ee9ZPfxb0gbHl9YQsHCbHbggzNz1YPFcUqKdYkN83T7kgzXvdLARamFF38YebFSylWdFvBzLhWM6O8Q3rJ6alRrJ4DS93fd9k1AUfMWzPSjkWnLYAgnA2EsOUz-YDHOuhVW0pbDDmMV0Sl6NQeaP7uwD6BW-X-_hyag#_=_
+  // postToPage(post: string, pageId: string, accessToken: string) {
+  //   console.log(post);
+  // }
+}

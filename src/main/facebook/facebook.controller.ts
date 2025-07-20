@@ -33,4 +33,13 @@ export class FacebookController {
       res.redirect(`http://localhost:3001?error=auth_failed`);
     }
   }
+
+  // @Post('/post')
+  // postToPage(
+  //   @Query('post') post: string,
+  //   @Query('pageId') pageId: string,
+  //   @Query('accessToken') accessToken: string,
+  // ) {
+  //   console.log(post, pageId, accessToken);
+  // }
 }
