@@ -15,23 +15,19 @@ export class FacebookService {
   }
 
   async exchangeCodeForToken(code: string) {
-    const appId = process.env.FB_APP_ID;
-    const appSecret = process.env.FB_APP_SECRET;
+    const appId = process.env.FACEBOOK_APP_ID;
+    const appSecret = process.env.FACEBOOK_APP_SECRET;
     const redirectUri = process.env.FB_REDIRECT_URI;
-
     const url = `https://graph.facebook.com/v18.0/oauth/access_token?client_id=${appId}&redirect_uri=${redirectUri}&client_secret=${appSecret}&code=${code}`;
 
-    // const response = await lastValueFrom(
-    //   this.httpService.get<{ access_token: string }>(url),
-    // );
-    const response = await lastValueFrom(this.httpService.get(url));
-    console.log('response ==>', response);
+    const response = await lastValueFrom(
+      this.httpService.get<{ access_token: string }>(url),
+    );
     const accessToken = response.data.access_token;
 
-    // console.log(accessToken);
     // TODO: Store access token in DB (associated with user or page)
 
-    return { accessToken, response };
+    return { accessToken };
   }
 }
 
