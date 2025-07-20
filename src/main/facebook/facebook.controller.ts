@@ -1,34 +1,45 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Controller, Get, Query, Res } from '@nestjs/common';
 import { FacebookService } from './facebook.service';
-import { CreateFacebookDto } from './dto/create-facebook.dto';
-import { UpdateFacebookDto } from './dto/update-facebook.dto';
+import { Response } from 'express';
 
-@Controller('facebook')
+@Controller('auth/facebook')
 export class FacebookController {
   constructor(private readonly facebookService: FacebookService) {}
 
-  @Post()
-  create(@Body() createFacebookDto: CreateFacebookDto) {
-    return this.facebookService.create(createFacebookDto);
-  }
-
   @Get()
-  findAll() {
-    return this.facebookService.findAll();
+  getFacebookLoginUrl() {
+    return this.facebookService.getFacebookLoginUrl();
   }
 
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.facebookService.findOne(+id);
+  @Get('/callback')
+  async handleFacebookCallback(
+    @Query('code') code: string,
+    @Res() res: Response,
+  ) {
+    try {
+      const { accessToken } =
+        await this.facebookService.exchangeCodeForToken(code);
+
+      res
+        .cookie('facebookToken', accessToken, {
+          httpOnly: true,
+          secure: false,
+          sameSite: 'lax',
+          maxAge: 7 * 24 * 60 * 60 * 1000,
+        })
+        .redirect(`http://localhost:3001`);
+    } catch (error) {
+      console.error('Error in Facebook callback:', error);
+      res.redirect(`http://localhost:3001?error=auth_failed`);
+    }
   }
 
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateFacebookDto: UpdateFacebookDto) {
-    return this.facebookService.update(+id, updateFacebookDto);
-  }
-
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.facebookService.remove(+id);
-  }
+  // @Post('/post')
+  // postToPage(
+  //   @Query('post') post: string,
+  //   @Query('pageId') pageId: string,
+  //   @Query('accessToken') accessToken: string,
+  // ) {
+  //   console.log(post, pageId, accessToken);
+  // }
 }

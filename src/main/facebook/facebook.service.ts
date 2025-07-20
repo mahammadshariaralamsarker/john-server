@@ -1,26 +1,36 @@
+import { HttpService } from '@nestjs/axios';
 import { Injectable } from '@nestjs/common';
-import { CreateFacebookDto } from './dto/create-facebook.dto';
-import { UpdateFacebookDto } from './dto/update-facebook.dto';
+import { lastValueFrom } from 'rxjs';
 
 @Injectable()
 export class FacebookService {
-  create(createFacebookDto: CreateFacebookDto) {
-    return 'This action adds a new facebook';
+  constructor(private readonly httpService: HttpService) {}
+
+  getFacebookLoginUrl() {
+    const clientId = process.env.FACEBOOK_APP_ID;
+    const redirectUri = process.env.FB_REDIRECT_URI;
+    const url = `https://www.facebook.com/v18.0/dialog/oauth?client_id=${clientId}&redirect_uri=${redirectUri}&scope=pages_show_list,pages_read_engagement`;
+
+    return url;
   }
 
-  findAll() {
-    return `This action returns all facebook`;
+  async exchangeCodeForToken(code: string) {
+    const appId = process.env.FACEBOOK_APP_ID;
+    const appSecret = process.env.FACEBOOK_APP_SECRET;
+    const redirectUri = process.env.FB_REDIRECT_URI;
+    const url = `https://graph.facebook.com/v18.0/oauth/access_token?client_id=${appId}&redirect_uri=${redirectUri}&client_secret=${appSecret}&code=${code}`;
+
+    const response = await lastValueFrom(
+      this.httpService.get<{ access_token: string }>(url),
+    );
+    const accessToken = response.data.access_token;
+
+    // TODO: Store access token in DB (associated with user or page)
+
+    return { accessToken };
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} facebook`;
-  }
-
-  update(id: number, updateFacebookDto: UpdateFacebookDto) {
-    return `This action updates a #${id} facebook`;
-  }
-
-  remove(id: number) {
-    return `This action removes a #${id} facebook`;
-  }
+  // postToPage(post: string, pageId: string, accessToken: string) {
+  //   console.log(post);
+  // }
 }
