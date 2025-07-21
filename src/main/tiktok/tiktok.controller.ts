@@ -67,4 +67,11 @@ export class TikTokController {
       'act.vijtqLqn7Jlgy4C13y1A3uVvQpOHVbrGE0LnpZaUrFtrBpicDTydbqEyMcj5!4450.va',
     );
   }
+  @Get('user-info')
+  @ApiOperation({ summary: 'Get TikTok user info' })
+  async getUserInfo() {
+    return this.tiktokService.getUserInfo(
+      'act.vijtqLqn7Jlgy4C13y1A3uVvQpOHVbrGE0LnpZaUrFtrBpicDTydbqEyMcj5!4450.va',
+    );
+  }
 }

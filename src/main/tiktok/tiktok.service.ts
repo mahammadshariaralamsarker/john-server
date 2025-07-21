@@ -46,10 +46,11 @@ export class TiktokService {
 
       return response.data;
     } catch (error) {
-      throw new HttpException(
-        error.response?.data || 'Failed to fetch TikTok user info',
-        error.response?.status || HttpStatus.INTERNAL_SERVER_ERROR,
-      );
+      if (axios.isAxiosError(error) && error.response) {
+        console.error('TikTok API error:', error.response.data);
+      } else {
+        console.error('Unknown error:', error);
+      }
     }
   }
 
