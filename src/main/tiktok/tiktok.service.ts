@@ -126,4 +126,26 @@ export class TiktokService {
       }
     }
   }
+
+  async queryVideos(videoIds: string, accessToken: string) {
+    try {
+      const url =
+        'https://open.tiktokapis.com/v2/video/query/?fields=id,title,create_time,video_description,duration,like_count,share_count,comment_count,cover_image_url';
+
+      const body = {
+        video_ids: videoIds,
+      };
+
+      const headers = {
+        Authorization: `Bearer ${accessToken}`,
+        'Content-Type': 'application/json',
+      };
+
+      const response = await axios.post(url, body, { headers });
+      return response.data;
+    } catch (error) {
+      console.error('TikTok video query error:', error.response?.data || error);
+      throw error;
+    }
+  }
 }

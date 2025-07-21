@@ -26,8 +26,6 @@ export class TikTokController {
       const tokenResponse = await this.tiktokService.getAccessToken(code);
       console.log({ tokenResponse });
       const redirectUrl = `http://localhost:3001/?accessToken=${tokenResponse.access_token}&refreshToken=${tokenResponse.refresh_token}`;
-      const accessToken = tokenResponse.access_token;
-      // const userInfo = await this.tiktokService.getUserInfo(accessToken);
       return res.redirect(redirectUrl);
     } catch (err) {
       console.error(err);
@@ -71,6 +69,18 @@ export class TikTokController {
   @ApiOperation({ summary: 'Get TikTok user info' })
   async getUserInfo() {
     return this.tiktokService.getUserInfo(
+      'act.vijtqLqn7Jlgy4C13y1A3uVvQpOHVbrGE0LnpZaUrFtrBpicDTydbqEyMcj5!4450.va',
+    );
+  }
+
+  @Get('query-videos')
+  @ApiOperation({ summary: 'Get list of videos' })
+  async queryVideos(
+    // video id body thkea asbe
+    @Body('videoIds') videoIds: string,
+  ) {
+    return this.tiktokService.queryVideos(
+      '7529579846909922568',
       'act.vijtqLqn7Jlgy4C13y1A3uVvQpOHVbrGE0LnpZaUrFtrBpicDTydbqEyMcj5!4450.va',
     );
   }
