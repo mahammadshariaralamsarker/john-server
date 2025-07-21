@@ -1,4 +1,4 @@
-import { Controller, Get, Query, Res } from '@nestjs/common';
+import { Controller, Get, Post, Query, Res } from '@nestjs/common';
 import { FacebookService } from './facebook.service';
 import { Response } from 'express';
 
@@ -34,12 +34,12 @@ export class FacebookController {
     }
   }
 
-  // @Post('/post')
-  // postToPage(
-  //   @Query('post') post: string,
-  //   @Query('pageId') pageId: string,
-  //   @Query('accessToken') accessToken: string,
-  // ) {
-  //   console.log(post, pageId, accessToken);
-  // }
+  @Post('/post')
+  postToPage(
+    @Query('post') post: string,
+    @Query('pageId') pageId: string,
+    @Query('accessToken') accessToken: string,
+  ) {
+    console.log(post, pageId, accessToken);
+  }
 }

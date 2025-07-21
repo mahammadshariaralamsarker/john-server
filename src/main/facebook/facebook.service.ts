@@ -30,7 +30,7 @@ export class FacebookService {
     return { accessToken };
   }
 
-  // postToPage(post: string, pageId: string, accessToken: string) {
-  //   console.log(post);
-  // }
+  postToPage(post: string, pageId: string, accessToken: string) {
+    console.log(post);
+  }
 }
