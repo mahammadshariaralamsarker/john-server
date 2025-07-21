@@ -106,25 +106,18 @@ export class TiktokService {
   }
   async getUploadedVideos(accessToken: string) {
     try {
-      const token =
-        'act.IB5KjgoxsyQShqmVmoHHyp0nmgJD9tmYX2UuDLpEqKY8cAP0FAl3KJUJEiHY!4507.va';
-
       const response = await axios.post(
-        'https://open.tiktokapis.com/v2/video/list/',
-        {
-          fields: ['video_id', 'title', 'create_time'],
-        },
+        'https://open.tiktokapis.com/v2/video/list/?fields=id,title,create_time,video_description,duration,like_count,share_count,comment_count,cover_image_url',
+        {},
         {
           headers: {
-            Authorization: `Bearer ${token}`,
+            Authorization: `Bearer ${accessToken}`,
             'Content-Type': 'application/json',
           },
         },
       );
-
       return response.data;
     } catch (error) {
-      console.error({ error });
       if (axios.isAxiosError(error) && error.response) {
         console.error('TikTok API error:', error.response.data);
       } else {
