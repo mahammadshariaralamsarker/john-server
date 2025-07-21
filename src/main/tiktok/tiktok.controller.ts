@@ -53,7 +53,11 @@ export class TikTokController {
       throw new BadRequestException('No video file uploaded.');
     }
 
-    return this.tiktokService.videoInit(video.filename, body.accessToken);
+    return this.tiktokService.videoInit(
+      body.title,
+      video.filename,
+      body.accessToken,
+    );
   }
 
   @Get('videos')

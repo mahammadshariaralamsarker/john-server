@@ -53,7 +53,7 @@ export class TiktokService {
     }
   }
 
-  async videoInit(filename: string, accessToken: string) {
+  async videoInit(title: string, filename: string, accessToken: string) {
     try {
       const videoPath = path.join(process.cwd(), 'public', 'uploads', filename);
       const videoStat = fs.statSync(videoPath);
@@ -62,7 +62,7 @@ export class TiktokService {
 
       const payload = {
         post_info: {
-          title: 'this will be a funny #cat video on your @tiktok #fyp',
+          title: title,
           privacy_level: 'SELF_ONLY',
           brand_content_toggle: false,
           brand_organic_toggle: false,
