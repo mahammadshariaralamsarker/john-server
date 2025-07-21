@@ -9,7 +9,7 @@ export class FacebookService {
   getFacebookLoginUrl() {
     const clientId = process.env.FACEBOOK_APP_ID;
     const redirectUri = process.env.FB_REDIRECT_URI;
-    const url = `https://www.facebook.com/v18.0/dialog/oauth?client_id=${clientId}&redirect_uri=${redirectUri}&scope=pages_show_list,pages_read_engagement`;
+    const url = `https://www.facebook.com/v18.0/dialog/oauth?client_id=${clientId}&redirect_uri=${redirectUri}&scope=pages_show_list,pages_read_engagement,business_management,pages_manage_posts,pages_manage_engagement,pages_read_engagement,pages_manage_metadata,pages_read_user_content`;
 
     return url;
   }
