@@ -27,7 +27,7 @@ export class FacebookController {
           sameSite: 'lax',
           maxAge: 7 * 24 * 60 * 60 * 1000,
         })
-        .redirect(`http://localhost:3001`);
+        .redirect(`http://localhost:3001?accessToken=${accessToken}`);
     } catch (error) {
       console.error('Error in Facebook callback:', error);
       res.redirect(`http://localhost:3001?error=auth_failed`);
